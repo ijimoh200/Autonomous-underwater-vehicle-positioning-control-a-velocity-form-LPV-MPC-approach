@@ -22,15 +22,14 @@ for k = 1:NoS
     if k <= round(NoS/4)
         yref(:,k) = [0; 0; 0; 0; 0; 0];
     else
-        yref(:,k) = [0.5; 0.5; 0.0; 0; 0; -0.];
+        yref(:,k) = [0.5; 0.5; 0.0; 0; 0; -0.1];
     end
     % Generate time-varying ocean current
-    if k <= round(NoS/2)
-        nu_c(:,k)  = [0; 0; 0; 0; 0; 0];
-    else
-        nu_c(:,k)  = [0.2*1; 0.2*1; 0.1; 0; 0; 0] ...
-            +[0.1*cos(3/20*pi*k*Ts)*cos(0.002*k*Ts); 0.1*sin(3/20*pi*k*Ts); 0.1*sin(0.002*k*Ts)*cos(3/20*pi*k*Ts); 0; 0; 0];
-    end
+%     if k <= round(NoS/2)
+%         nu_c(:,k)  = [0; 0; 0; 0; 0; 0];
+%     else
+        nu_c(:,k)  = [0.2*cos(3*pi*k*Ts/20) + 0.2; 0.2*cos(3*pi*k*Ts/20) + 0.2; 0.2*sin(3*pi*k*Ts/20); 0;0;0];
+%     end
 end
 
 %% Simulate Controller
@@ -72,7 +71,7 @@ stairs(t, yref(4, 1:size(t,2)),'-.k', 'linewidth', 1.2)
 hold on
 stairs(t, y1(4, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('$\phi$ [rad]', 'interpreter','latex')
-ylim([-0.04 0.02])
+ylim([-0.1 0.1])
 grid on
 
 subplot(629)
@@ -90,7 +89,7 @@ stairs(t, y1(6, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('$\psi$ [rad]', 'interpreter','latex')
 legend('Target','LPCMPC1')
 xlabel ('Time [s]', 'interpreter','latex')
-ylim([-0.15 0.03])
+ylim([-0.15 0.1])
 grid on
 
 subplot(622)

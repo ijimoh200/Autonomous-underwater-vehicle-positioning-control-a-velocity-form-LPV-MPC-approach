@@ -12,7 +12,7 @@ nu = 6;                     % number of position variables
 ny = 6;                     % number of position (output) variables
 Q = blkdiag(1, 1, 1, 1, 1, 1)*1000;
 R = blkdiag(1, 1, 1, 1,1, 1)*2e-3;
-N = 12;
+N = 16;
 Nu = 2;
 
 % Memory allocations
@@ -43,9 +43,9 @@ for k = 1:NoS-1
     Btilde = [Bk; zeros(ny, nu)];
     Gtilde = [zeros(nx) eye(ny)];
     Bdtilde = [zeros(nx); eye(nx)];
-    [X,~,~,~] = dare(Ak,Bk, Q,R,[],[]); % Computes terminal weight based...
+    % [X,~,~,~] = dare(Ak,Bk, Q,R,[],[]); % Computes terminal weight based...
     % on discrete-time algebraic Riccati Eqn
-    S  = 1*X; % This may also be taken as Q
+    S  = 2*Q; %1*X;
 
     % Contruction of prediction model matrices
     A_p = predA(Gtilde,Atilde,N);
