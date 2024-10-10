@@ -33,15 +33,19 @@ end
 
 % State and input variables assignment
 %State variables:
-
 x = xi(1);              y = xi(2);                  z = xi(3);
 phi = xi(4);            theta = xi(5);              psi = xi(6);
 u = xi(7);              v =xi(8);                   w = xi(9);   
 p = xi(10);             q = xi(11) ;                r = xi(12);
+
+% Compute velocity vectors
 v1 = [u v w]'; 
 v2 = [p q r]';  
-nu = [v1; v2];
+nu = [v1; v2];          % AUV Velocity 
 
+% AUV relative velocity w.r.t. ocean currents
+nu_r = nu - nu_c;       % AUV relative velocity
+v1_r = nu_r(1:3);       v2_r = nu_r(4:6);
 % Input variables                           % Units
 tau_u     = ui(1);                    % N
 tau_v     = ui(2);                    % N
@@ -50,7 +54,7 @@ tau_p     = ui(4);                    % Nm
 tau_q     = ui(5);                    % Nm
 tau_r     = ui(6);                    % Nm
 
-%% Vehicle's parameter
+% Vehicle's parameter
 W       = 1940;                     % N
 B       = 1999;                     % N
 L       = 3.00;                     % m
@@ -92,7 +96,7 @@ Zqd     = -28.3;                    % kg.m^2/rad
 Mwd     = -28.3;                    % kg.m
 Nvd     = 28.3;                     % kg.m
 
-%% Kinematic model
+% Kinematic model
 
 % The vehicle's kinematics given by eta = [x y z phi theta psi]'; is
 % derived using the transformation matrix J through the relationship: 
@@ -115,9 +119,7 @@ J2 = [1 sin1*tan2 cos1*tan2;
 Jk = [J1 zeros(size(J1,1),size(J2,2));
     zeros(size(J2,1),size(J1,2)) J2 ];
 
-eta = Jk*nu;
-
-%% Dynamic model
+% Dynamic model
 
 % Added mass matrix
 I0 = [Ixx 0 0; 0 Iyy 0; 0 0 Izz];
@@ -154,18 +156,18 @@ M = MRB + MA;
 CRB = [zeros(3) -SS(M11*v1 + M12*v2);
     -SS(M11*v1 + M12*v2) -SS(M21*v1 + M22*v2)];
 
-CAM = [zeros(3) -SS(A11*v1 + A12*v2);
-    -SS(A11*v1 + A12*v2) -SS(A21*v1 + A22*v2)];
+CAM = [zeros(3) -SS(A11*v1_r + A12*v2_r);
+    -SS(A11*v1_r + A12*v2_r) -SS(A21*v1_r + A22*v2_r)];
 
 Ck = CRB + CAM;
 
 % Hydrodynamic Damping
-Dk = -[Xuu*abs(u) 0 0 0 0 0;
-    0 Yvv*abs(v) 0 0 0 Yrr*abs(r);
-    0 0 Zww*abs(w) 0 Zqq*abs(q) 0;
-    0 0 0 Kpp*abs(q) 0 0;
-    0 0 Mww*abs(w) 0 Mqq*abs(q) 0;
-    0 Nvv*abs(v) 0 0 0 Nrr*abs(r)];
+Dk = -[Xuu*abs(nu_r(1)) 0 0 0 0 0;
+    0 Yvv*abs(nu_r(2)) 0 0 0 Yrr*abs(nu_r(6));
+    0 0 Zww*abs(nu_r(3)) 0 Zqq*abs(nu_r(5)) 0;
+    0 0 0 Kpp*abs(nu_r(5)) 0 0;
+    0 0 Mww*abs(nu_r(3)) 0 Mqq*abs(nu_r(5)) 0;
+    0 Nvv*abs(nu_r(2)) 0 0 0 Nrr*abs(nu_r(6))];
 
 % Buoyancy forces and moments
 gk = [(W-B)*sin2;
@@ -178,10 +180,9 @@ gk = [(W-B)*sin2;
 % Input forces and moments
 H = [tau_u;tau_v;tau_w;tau_p; tau_q;tau_r];
 % Compute state vector
-nu_r = nu - nu_c;
 g_xi = [Jk*nu_r; -inv(M)*(Ck*nu_r+Dk*nu_r+gk)];
 h_xi_u = [zeros(6,1); inv(M)*H];
 xidot = g_xi + h_xi_u + dw; 
 
-
+end
 

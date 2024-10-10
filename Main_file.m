@@ -22,7 +22,7 @@ for k = 1:NoS
     if k <= round(NoS/4)
         yref(:,k) = [0; 0; 0; 0; 0; 0];
     else
-        yref(:,k) = [0.5; 0.5; 0.0; 0; 0; -0.1];
+        yref(:,k) = [0.5; 0.5; 0.0; 0; 0; -0.];
     end
     % Generate time-varying ocean current
     if k <= round(NoS/2)
@@ -81,6 +81,7 @@ hold on
 stairs(t, y1(5, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('$\theta$ [rad]', 'interpreter','latex')
 grid on
+ylim([-0.05 0.05])
 
 subplot(6,2,11)
 stairs(t, yref(6, 1:size(t,2)),'-.k', 'linewidth', 1.2)
@@ -95,33 +96,39 @@ grid on
 subplot(622)
 stairs(t, tau1(1, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('X [N]', 'interpreter','latex')
+ylim([-800 800])
 grid on
 
 subplot(624)
 stairs(t, tau1(2, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('Y [N]', 'interpreter','latex')
+ylim([-800 800])
 grid on
 
 subplot(626)
 stairs(t, tau1(3, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('Z [N]', 'interpreter','latex')
+ylim([-200 200])
 grid on
 
 subplot(628)
 stairs(t, tau1(4, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('K [Nm]', 'interpreter','latex')
+ylim([-200 200])
 grid on
 
 
 subplot(6,2,10)
 stairs(t, tau1(5, 1:size(t,2)),'r', 'linewidth', 1.2)
 ylabel('M [Nm]', 'interpreter','latex')
+ylim([-800 800])
 grid on
 
 subplot(6,2,12)
 stairs(t, tau1(6, 1:size(t,2)),'r', 'linewidth', 1.2)
 xlabel ('Time [s]', 'interpreter','latex')
 ylabel('N [Nm]', 'interpreter','latex')
+ylim([-800 800])
 grid on
 
 

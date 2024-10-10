@@ -11,8 +11,8 @@ nx = 6;                     % number of velocity variables
 nu = 6;                     % number of position variables
 ny = 6;                     % number of position (output) variables
 Q = blkdiag(1, 1, 1, 1, 1, 1)*1000;
-R = blkdiag(1, 1, 1, 1,1, 1)*0.002;
-N = 15;
+R = blkdiag(1, 1, 1, 1,1, 1)*2e-3;
+N = 12;
 Nu = 2;
 
 % Memory allocations
@@ -35,6 +35,7 @@ for k = 1:NoS-1
 
     % Obtain update AUV matrices based on current state
     [~,M, Jk, Ck, Dk,~] = Naminow_AUV([y(:,k);x(:,k)],tau_,0*nu_c(:,k),tau_wave);
+    % Note: current is multiplied by zero because it is unknown to the controller
     Ak = eye(6)-inv(M)*(Ck+Dk)*Ts;
     Bk =  inv(M)*Ts;
     Hk = Jk*Ts;
